@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <style>
+            .hidden {
+                display: none;
+            } 
+        </style>
+    </head>
+    <body class="hidden">
+        <h2>Your seat reservations</h2>
+
+        <table>
+            <thead><tr>
+                <th>Passenger name</th><th>Meal</th><th>Surcharge</th><th></th>
+            </tr></thead>
+            <!-- Todo: Generate table body -->
+            <tbody data-bind="foreach: seats">
+                <tr>
+                    <td data-bind="text: name"></td>      
+                    <td data-bind="text: meal().mealName"></td>
+                    <td data-bind="text: meal().price"></td>
+                </tr>
+            </tbody>
+        </table>
+        <input data-bind="value: passenger" />
+        <select data-bind="foreach: availableMeals, selectedIndex: mealIndex">
+            <option data-bind="text: $root.mealInfo($data)"></option>
+        </select>
+        <button data-bind="click: addReservation">Add a reservation</button>
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js" data-main="main"></script>
+    </body>
+</html>
