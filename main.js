@@ -7,7 +7,9 @@ require.config({
     }
 });
 
-require(['reservation'], function(reservationModel) {
+require(['knockout', 'reservation'], function(ko, ReservationModel) {
+    ko.applyBindings(new ReservationModel());
+
     document
         .querySelector('body')
         .className = "";

@@ -1,4 +1,4 @@
 bamboozledDiscombobulator
 =========================
 
-a playground for various git experiments ;)
+a playground for various experiments ;)
