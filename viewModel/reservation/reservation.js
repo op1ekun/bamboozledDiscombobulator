@@ -1,16 +1,11 @@
-define(['knockout', 'seatreservation'], function(ko, SeatReservation) {
+define(['knockout', 'seatreservation', 'meals'], function(ko, SeatReservation, meals) {
 
     // Overall viewmodel for this screen, along with initial state
     function ReservationsViewModel() {
         var _this = this;
 
         // Non-editable catalog data - would come from the server
-        _this.availableMeals = [
-            { mealName: 'Standard (sandwich)', price: 0 },
-            { mealName: 'StandardPlus (sandwich + soda)', price: 3.95 },
-            { mealName: 'Premium (lobster)', price: 34.95 },
-            { mealName: 'Ultimate (whole zebra)', price: 290 }
-        ];
+        _this.availableMeals = meals;
 
         // Editable data
         _this.seats = ko.observableArray([
