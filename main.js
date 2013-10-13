@@ -2,8 +2,8 @@ require.config({
     basePath: '.',
     paths: {
         'knockout'          : '//cdnjs.cloudflare.com/ajax/libs/knockout/2.3.0/knockout-min',
-        'reservation'       : 'ViewModel/reservation/reservation',
-        'seatreservation'   : 'ViewModel/seatreservation/seatreservation',
+        'reservation'       : 'viewModel/reservation/reservation',
+        'seatreservation'   : 'viewModel/seatreservation/seatreservation',
         'meals'             : 'model/meals/meals'
     }
 });
