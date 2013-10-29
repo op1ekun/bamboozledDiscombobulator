@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ToDo List module specification tests</title>
+    </head>
+    <body>
+        <!-- fixtures -->
+        <div class="editablelist">
+        </div>
+
+        <script src="specs/lib/jasmine-1.3.0/jasmine.js"></script>
+        <script src="specs/lib/jasmine.console_reporter.js"></script>
+
+        <!-- CODE -->
+        <script>
+            window.app = {
+                widgets     : {},
+                components  : {}
+            }
+        </script>
+        
+        <script src="components/pubsub/pubsub.js"></script>
+        <script src="components/eventemitter/eventemitter.js"></script>
+        <script src="widgets/editablelist/editablelist.js"></script>
+
+        <!-- SPECS -->
+        <script src="specs/widgets/editablelist/editablelist.spec.js"></script>
+
+        <script>
+            (function() {
+
+                var jasmineEnv  = jasmine.getEnv(),
+                    reporter    = new jasmine.ConsoleReporter();
+
+                // jasmineEnv.updateInterval = 250;
+                jasmineEnv.addReporter(reporter);
+                jasmineEnv.execute();
+
+            })();
+        </script>
+    </body>
+</html>
