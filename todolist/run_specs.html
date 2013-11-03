@@ -15,16 +15,24 @@
         <script>
             window.app = {
                 widgets     : {},
-                components  : {}
+                components  : {
+                    utils   : {}
+                }
             }
         </script>
         
         <script src="components/pubsub/pubsub.js"></script>
         <script src="components/eventemitter/eventemitter.js"></script>
+        <script src="widgets/textinput/textinput.js"></script>
+        <!-- 
         <script src="widgets/editablelist/editablelist.js"></script>
+        -->
 
         <!-- SPECS -->
+        <!-- 
         <script src="specs/widgets/editablelist/editablelist.spec.js"></script>
+        -->
+        <script src="specs/widgets/textinput/textinput.spec.js"></script>
 
         <script>
             (function() {

@@ -5,39 +5,24 @@
 
         // no AMD, CommonJS etc.
         it('should be a part of the global scope', function() {
-            expect(global
-                    .app
-                    .widgets
-                    .EditableList).toBeTruthy();
-
-            expect(global
-                    .app
-                    .widgets
-                    .EditableList instanceof Function).toBeTruthy();
+            expect(global.app.widgets.EditableList).toBeTruthy();
+            expect(global.app.widgets.EditableList instanceof Function).toBeTruthy();
         });
 
         it('should NOT instantiate without the config object', function() {
             expect(function() {
-                var list = new global
-                                .app
-                                .widgets
-                                .EditableList();
+                var list = new global.app.widgets.EditableList();
             }).toThrow(new ReferenceError('config is undefined'));
         });
         
         // widget renders into the node element
         it('should NOT instantiate without the config.node DOM element', function() {
             expect(function() {
-                var list = new global
-                                .app
-                                .widgets
-                                .EditableList({});
+                var list = new global.app.widgets.EditableList({});
             }).toThrow(new ReferenceError('config.node is undefined'));
             
             expect(function() {
-                var list = new global
-                                .app
-                                .widgets
+                var list = new global.app.widgets
                                 .EditableList({
                                     node : {}
                                 });
@@ -46,9 +31,7 @@
 
         it('should NOT instantiate without the config.items object', function() {
             expect(function() {
-                var list = new global
-                                .app
-                                .widgets
+                var list = new global.app.widgets
                                 .EditableList({
                                     node : document.querySelector('.editablelist'),
                                 });
@@ -56,9 +39,7 @@
         });
 
         it('should expose render, destroy, on, off, addItem, and removeItem methods', function() {
-            var list = new global
-                            .app
-                            .widgets
+            var list = new global.app.widgets
                             .EditableList({
                                 node    : document.querySelector('.editablelist'),
                                 items   : [
@@ -82,21 +63,22 @@
 
             beforeEach(function() {
                 node = document.querySelector('.editablelist');
-                list = new global.app.widgets.EditableList({
-                    node        : node,
-                    items   : [
-                        {
-                            id      : '123',
-                            content : 'some simple text content'
-                        },
-                        {
-                            id      : '234',
-                            content : 'another simple text contet'
-                        }
-                    ],
-                    // no UI is provided to edit, delete etc.
-                    editable    : false
-                });
+                list = new global.app.widgets
+                            .EditableList({
+                                node        : node,
+                                items   : [
+                                    {
+                                        id      : '123',
+                                        content : 'some simple text content'
+                                    },
+                                    {
+                                        id      : '234',
+                                        content : 'another simple text contet'
+                                    }
+                                ],
+                                // no UI is provided to edit, delete etc.
+                                editable    : false
+                            });
             });
 
             afterEach(function() {
@@ -111,13 +93,22 @@
                 expect(node.querySelectorAll('li[data-id]').length).toEqual(2);
             });
 
-            it('should publish the "ready" event when finished', function() {
+            it('should publish the "render" event when finished', function() {
                 var spy = spyOn(list, 'publish');
 
                 list.render();
 
                 // behaviour verification
-                expect(list.publish).toHaveBeenCalledWith('ready');
+                expect(list.publish).toHaveBeenCalledWith('render');
+            });
+
+            it('should NOT add item if the render method was NOT called', function() {
+                expect(function() {
+                    list.addItem({
+                        id      : '1248',
+                        content : 'add item to not rendered list'
+                    });
+                }).toThrow(new ReferenceError('list node is undefined, call render method first'));
             });
 
             it('should NOT add item if an invalid config is provided for the addItem method', function() {
@@ -131,6 +122,7 @@
                     list.addItem({});
                 }).toThrow(new ReferenceError('config.id is undefined'));
             });
+
 
             it('should add item if a valid config is provided for the addItem method', function() {
                 list.render();
@@ -176,7 +168,7 @@
                 var spy = spyOn(list, 'publish');
 
                 list.render();
-                list.remove('234');
+                list.removeItem('234');
 
                 // behaviour verification
                 expect(list.publish).toHaveBeenCalledWith('item-remove', '234');

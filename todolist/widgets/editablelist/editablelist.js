@@ -1,7 +1,7 @@
 !(function(global, EventEmitter) {
     'use strict';
 
-    function validateInput(config) {
+    function EditableList(config) {
         if (!config) {
             throw new ReferenceError('config is undefined');
         }
@@ -16,10 +16,6 @@
         if (!config.items) {
             throw new ReferenceError('config.items is undefined');
         }
-    }
-
-    function EditableList(config) {
-        validateInput(config);
 
         EventEmitter.call(this);
         
@@ -29,22 +25,23 @@
         this._node      = config.node;
         this._items     = config.items;
         this._editable  = (config.editable ? config.editable : true);
+
+        this._renderedItems = {};
     }
 
     EditableList.prototype.render   = function() {
-        var _this       = this,
-            items       = _this._items;
+        var items       = this._items;
 
-        _this._listNode             = document.createElement('ul');
-        _this._listNode.className   = 'list';
+        this._listNode             = document.createElement('ul');
+        this._listNode.className   = 'list';
 
         for (var i = 0, l = items.length; i < l; i++) {
-            _this.addItem(items[i]);
+            this.addItem(items[i]);
         }
 
-        _this._node.appendChild(_this._listNode);
+        this._node.appendChild(this._listNode);
 
-        _this.publish('ready');
+        this.publish('render');
     };
 
     EditableList.prototype.destroy  = function() {
@@ -57,7 +54,7 @@
 
     EditableList.prototype.addItem  = function(config) {
         if (!this._listNode) {
-            throw new ReferenceError('list node is undefined, call render method first')
+            throw new ReferenceError('list node is undefined, call render method first');
         }
 
         if (!config) {
@@ -67,15 +64,28 @@
             throw new ReferenceError('config.id is undefined');
         }
 
-        var itemTmpl    = '<li data-id="{{id}}">{{content}}</li>';
+        var itemNode        = document.createElement('li');
+        itemNode.innerHTML  = config.content;
+        itemNode.setAttribute('data-id', config.id);
 
-        this._listNode
-            .innerHTML += itemTmpl
-                            .replace('{{id}}', config.id)
-                            .replace('{{content}}', config.content);
+        this._listNode.appendChild(itemNode);
+        this._renderedItems[config.id] = itemNode;
+
+        this.publish('item-add', config.id);
+        return config.id;
     };
 
-    EditableList.prototype.removeItem  = function() {
+    EditableList.prototype.removeItem  = function(id) {
+        var item = this._renderedItems[id];
+        if (item) {
+            item.parentNode.removeChild(item);
+            delete this._renderedItems[id];
+
+            this.publish('item-remove', id);
+            return true;
+        }
+
+        return false;
     };
 
     global.app.widgets.EditableList = EditableList;
