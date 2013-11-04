@@ -1,4 +1,4 @@
-!(function(global, EventEmitter) {
+!(function(global, EventEmitter, TextInput, utils) {
     'use strict';
 
     function EditableList(config) {
@@ -22,15 +22,16 @@
         // "private" properties
         // they should not be used directly
         // USE AT YOUR OWN RISK ;)
-        this._node      = config.node;
-        this._items     = config.items;
-        this._editable  = (config.editable ? config.editable : true);
+        this._node          = config.node;
+        this._items         = config.items;
+        this._editable      = (config.editable ? config.editable : true);
+        this._customActions = config.customActions;
 
         this._renderedItems = {};
     }
 
     EditableList.prototype.render   = function() {
-        var items       = this._items;
+        var items = this._items;
 
         this._listNode             = document.createElement('ul');
         this._listNode.className   = 'list';
@@ -46,7 +47,7 @@
 
     EditableList.prototype.destroy  = function() {
         // TODO detach events!
-        // 
+        
         // clear node
         this._node.innerHTML = '';
         this.publish('destroy');
@@ -64,14 +65,46 @@
             throw new ReferenceError('config.id is undefined');
         }
 
-        var itemNode        = document.createElement('li');
-        itemNode.innerHTML  = config.content;
+        // TODO
+        // edit functionality
+        function handleItemChange(val) {
+            console.log('item change', val);
+        }
+
+        var _this       = this,
+            itemNode    = document.createElement('li'),
+            textinput, removeItemButton;
+
         itemNode.setAttribute('data-id', config.id);
 
-        this._listNode.appendChild(itemNode);
-        this._renderedItems[config.id] = itemNode;
+        if (_this._editable === false) {
+            itemNode.innerHTML  = config.content;
+        }
+        else {
+            textinput = new TextInput({
+                node    : itemNode,
+                value   : config.content
+            });
 
-        this.publish('item-add', config.id);
+            textinput.render();
+
+            removeItemButton            = document.createElement('button');
+            removeItemButton.className  = 'item-remove';
+            removeItemButton.innerHTML  = 'x';
+
+            utils.attachDOMEvent(removeItemButton, 'click', function() {
+                _this.removeItem(config.id);
+            });
+
+            itemNode.appendChild(removeItemButton);
+
+            textinput.on('change', handleItemChange);
+        }
+
+        _this._listNode.appendChild(itemNode);
+        _this._renderedItems[config.id] = itemNode;
+
+        _this.publish('item-add', config.id, config);
         return config.id;
     };
 
@@ -90,4 +123,7 @@
 
     global.app.widgets.EditableList = EditableList;
 
-})(this, this.app.components.EventEmitter);
+})( this,
+    this.app.components.EventEmitter,
+    this.app.widgets.TextInput,
+    this.app.components.Utils);

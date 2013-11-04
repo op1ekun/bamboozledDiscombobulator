@@ -5,6 +5,9 @@
     </head>
     <body>
         <!-- fixtures -->
+        <div class="textinput">
+        </div>
+
         <div class="editablelist">
         </div>
 
@@ -15,23 +18,24 @@
         <script>
             window.app = {
                 widgets     : {},
-                components  : {
-                    utils   : {}
-                }
+                components  : {}
             }
         </script>
         
         <script src="components/pubsub/pubsub.js"></script>
         <script src="components/eventemitter/eventemitter.js"></script>
+        <script src="components/utils/utils.js"></script>
+        <script src="components/storage/storage.js"></script>
         <script src="widgets/textinput/textinput.js"></script>
-        <!-- 
         <script src="widgets/editablelist/editablelist.js"></script>
+        <!-- 
         -->
 
         <!-- SPECS -->
         <!-- 
-        <script src="specs/widgets/editablelist/editablelist.spec.js"></script>
         -->
+        <script src="specs/components/storage/storage.spec.js"></script>
+        <script src="specs/widgets/editablelist/editablelist.spec.js"></script>
         <script src="specs/widgets/textinput/textinput.spec.js"></script>
 
         <script>
@@ -40,7 +44,7 @@
                 var jasmineEnv  = jasmine.getEnv(),
                     reporter    = new jasmine.ConsoleReporter();
 
-                // jasmineEnv.updateInterval = 250;
+                jasmineEnv.updateInterval = 250;
                 jasmineEnv.addReporter(reporter);
                 jasmineEnv.execute();
 

@@ -2,16 +2,143 @@
 <html>
     <head>
         <title>ToDo List technical task</title>
-        <!-- CSS HERE -->
+
+        <style>
+            html, ul, li, input, button {
+                padding : 0;
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
+
+            input {
+                border: 1px solid #000;
+                width: 100%;
+            }
+
+            ul {
+                list-style: none;
+            }
+
+            .todolist {
+                padding: 5px;
+                width: 200px;
+                border: 1px solid #cacaca;    
+            }
+
+                label {
+                    display: block;
+                }
+
+                .list {
+                    padding: 5px 0 0 0;
+                }
+
+                .list li {
+                    margin-top: 1px;
+                    border: 1px solid #ccc;
+                    padding: 2px;
+                }
+
+                .list input {
+                    border: 0;
+                    width: 172px;
+                    display: inline-block;
+                    vertical-align: top;
+                }
+
+                .list input:focus {
+                    border: 1px solid #000;
+                }
+
+                .list button {
+                    margin-left: 2px;
+                    width: 20px;
+                    height: 20px;
+                    font-size: 10px;
+                    text-transform: uppercase;
+                    display: inline-block;
+                    vertical-align: top;
+                }
+        </style>
     </head>
     <body>
-        <header>ToDo List</header>
-        <!-- SCRIPTS HERE -->
+        <header>
+            <h1>ToDo List</h1>
+        </header>
+
+        <div class="todolist">
+            <div class="add_item-container"></div>
+        </div>
+
         <script>
             window.app = {
                 widgets     : {},
                 components  : {}
             }
+        </script>
+        
+        <script src="components/pubsub/pubsub.js"></script>
+        <script src="components/eventemitter/eventemitter.js"></script>
+        <script src="components/utils/utils.js"></script>
+        <script src="components/storage/storage.js"></script>
+        <script src="widgets/textinput/textinput.js"></script>
+        <script src="widgets/editablelist/editablelist.js"></script>
+
+        <script>
+            (function(TextInput, EditableList, storage) {
+                'use strict';
+
+                var textinput       = new TextInput({
+                        node    : document.querySelector('.add_item-container'),
+                        label   : 'Add ToDo task (type and press enter to add)',
+                        id      : 'item-add'
+                    }),
+                    items           = [], 
+                    storageData     = storage.getAll('todoList');
+
+                for (var i in storageData) {
+                    items.push(storageData[i]);
+                }
+
+                var editablelist    = new EditableList({
+                        node    : document.querySelector('.todolist'),
+                        items   : items
+                    });
+
+                editablelist.on('render', handleOnListRender);
+                editablelist.on('item-add', handleAddItem);
+                editablelist.on('item-remove', handleRemoveItem);
+
+                function handleOnListRender() {
+                    textinput.on('change', handleInputChange);
+                }
+
+                function handleAddItem(itemId, config) {
+                    console.log('add item', config, 'to the storage');
+                    storage.add(itemId, config);
+                }
+
+                function handleRemoveItem(itemId) {
+                    console.log('remove item', itemId, 'from the storage');
+                    storage.remove(itemId);
+                }
+
+                function handleInputChange(val) {
+                    editablelist.addItem({
+                        id      : new Date().getTime(),
+                        content : val
+                    });
+
+                    // reset input value
+                    textinput.setValue('');
+                }
+
+                textinput.render();
+                editablelist.render();
+
+            })( this.app.widgets.TextInput,
+                this.app.widgets.EditableList,
+                new this.app.components.Storage('todoList'));
         </script>
     </body>
 </html>
