@@ -14,5 +14,5 @@ require(['knockout', 'reservation'], function(ko, ReservationModel) {
     // show the body
     document
         .querySelector('body')
-        .className = "";
+        .className = 'fake';
 });
